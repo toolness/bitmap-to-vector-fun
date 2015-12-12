@@ -9,11 +9,11 @@ svg path {
 <title>Bitmap to Vector Fun</title>
 <p>Hello.</p>
 <pre id="hi">
-*    *
-*    
-***  * ***
-* *  * * *
-* *  * ***
+    *   *
+    *
+*** *** * ***
+* * * * * * *
+*** * * * ***
 </pre>
 <script>
 function asciiToGrid(text) {
@@ -171,7 +171,7 @@ function pathsToSVG(paths) {
 
 var SQUARE_SIZE = 16;
 
-var grid = asciiToGrid(document.getElementById('hi').textContent.trim());
+var grid = asciiToGrid(document.getElementById('hi').textContent);
 
 var paths = gridToPaths(grid, SQUARE_SIZE, 0.5);
 
