@@ -2,7 +2,7 @@
 <meta charset="utf-8">
 <style>
 svg path {
-  fill: none;
+  fill: blue;
   stroke: red;
 }
 </style>
@@ -51,30 +51,26 @@ function gridToPaths(grid, squareSize, offset) {
   var i, j;
 
   var addToPath = function(pathId, x1, y1, x2, y2) {
-    var path = paths[pathId];
-    var doMove = false;
-    var lastCmd;
+    var subpaths = paths[pathId];
 
-    if (path.length == 0) {
-      doMove = true;
+    if (subpaths.length == 0) {
+      subpaths.push([{x: x1, y: y1}, {x: x2, y: y2}]);
     } else {
-      lastCmd = path[path.length - 1];
-      if (!(lastCmd.x == x1 && lastCmd.y == y1))
-        doMove = true;
-    }
+      for (var i = 0; i < subpaths.length; i++) {
+        var start = subpaths[i][0];
+        var end = subpaths[i][subpaths[i].length - 1];
 
-    if (doMove) {
-      path.push({
-        cmd: 'M',
-        x: x1,
-        y: y1
-      });
+        if (start.x == x2 && start.y == y2) {
+          subpaths[i].unshift({x: x1, y: y1});
+          return;
+        }
+        if (end.x == x1 && end.y == y1) {
+          subpaths[i].push({x: x2, y: y2});
+          return;
+        }
+      }
+      subpaths.push([{x: x1, y: y1}, {x: x2, y: y2}]);
     }
-    path.push({
-      cmd: 'L',
-      x: x2,
-      y: y2
-    });
   };
 
   var visit = function(x, y, pathId) {
@@ -159,8 +155,12 @@ function pathsToSVG(paths) {
 
   paths.forEach(function(path) {
     var svgPath = document.createElementNS(NS, 'path');
-    var d = path.map(function(desc) {
-      return desc.cmd + desc.x + ',' + desc.y;
+    var d = path.map(function(subpath) {
+      var moveTo = 'M' + subpath[0].x + ',' + subpath[0].y;
+
+      return moveTo + subpath.slice(1).map(function lineTo(point) {
+        return 'L' + point.x + ',' + point.y;
+      }).join('');
     }).join('');
     svgPath.setAttribute('d', d);
     svg.appendChild(svgPath);
