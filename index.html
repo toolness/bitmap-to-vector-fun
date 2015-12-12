@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Bitmap to Vector Fun</title>
+<p>Hello.</p>
+<pre id="hi">
+*    *
+*    
+***  *
+* *  *
+* *  *
+</pre>
+<script>
+function asciiToGrid(text) {
+  var lines = text.split('\n');
+  var grid = [];
+  var char;
+
+  grid.EMPTY = false;
+  grid.FILLED = true;
+  grid.height = lines.length;
+  grid.width = Math.max.apply(Math, lines.map(function(line) {
+    return line.length;
+  }));
+
+  for (var i = 0; i < grid.height; i++) {
+    grid.push([]);
+    for (var j = 0; j < grid.width; j++) {
+      char = lines[i].charAt(j);
+      grid[i].push((!char || char == ' ') ? grid.EMPTY : grid.FILLED);
+    }
+  }
+
+  grid.getSquare = function(x, y) {
+    return grid[y][x];
+  };
+
+  return grid;
+}
+
+function gridToPaths(grid, squareSize, offset) {
+  offset = offset || 0;
+
+  var gridInfo = [];
+  var paths = [];
+  var i, j;
+
+  var addToPath = function(pathId, x1, y1, x2, y2) {
+    var path = paths[pathId];
+
+    path.push([{x: x1, y: y1}, {x: x2, y: y2}]);
+  };
+
+  var joinPath = function(path) {
+    function joinOneSegment(a, paths) {
+      var start = a[0];
+      var end = a[a.length - 1];
+
+      for (var i = 0; i < paths.length; i++) {
+        var otherPath = paths[i];
+        var otherStart = otherPath[0];
+        var otherEnd = otherPath[otherPath.length - 1];
+
+        if (start.x == otherEnd.x && start.y == otherEnd.y) {
+          paths[i] = otherPath.concat(a.slice(1));
+          console.log("found another path that ends where we start");
+          return paths;
+        } else if (otherStart.x == end.x && otherStart.y == end.y) {
+          paths[i] = a.concat(otherPath.slice(1));
+          console.log("found another path that starts where we end");
+          return paths;
+        }
+      }
+
+      throw new Error("assertion failure: unable to join segment");
+    }
+
+    for (var iter = 0; iter < 10000; i++) {
+      if (path.length == 1) return path[0];
+      path = joinOneSegment(path[0], path.slice(1));
+    }
+
+    throw new Error("assertion failure: too many iterations");
+  };
+
+  var visit = function(x, y, pathId) {
+    if (gridInfo[y][x].visited) return;
+    gridInfo[y][x].visited = true;
+
+    if (pathId === null) {
+      pathId = paths.length;
+      paths.push([]);
+    }
+
+    var top = y * squareSize + offset;
+    var left = x * squareSize + offset;
+    var bottom = top + squareSize;
+    var right = left + squareSize;
+
+    if (getSquare(x, y - 1) === grid.EMPTY) {
+      // Add top edge to path
+      addToPath(pathId, left, top, right, top);
+    } else {
+      visit(x, y - 1, pathId);
+    }
+
+    if (getSquare(x + 1, y) === grid.EMPTY) {
+      // Add right edge to path
+      addToPath(pathId, right, top, right, bottom);
+    } else {
+      visit(x + 1, y, pathId);
+    }
+
+    if (getSquare(x, y + 1) === grid.EMPTY) {
+      // Add bottom edge to path
+      addToPath(pathId, right, bottom, left, bottom);
+    } else {
+      visit(x, y + 1, pathId);
+    }
+
+    if (getSquare(x - 1, y) === grid.EMPTY) {
+      // Add left edge to path
+      addToPath(pathId, left, bottom, left, top);
+    } else {
+      visit(x - 1, y, pathId);
+    }
+  };
+
+  var getSquare = function(x, y) {
+    if (x < 0 || x >= grid.width ||
+        y < 0 || y >= grid.height)
+      return grid.EMPTY;
+    return grid.getSquare(x, y);
+  };
+
+  for (i = 0; i < grid.height; i++) {
+    gridInfo.push([]);
+    for (j = 0; j < grid.width; j++) {
+      gridInfo[i].push({
+        visited: false
+      });
+    }
+  }
+
+  for (i = 0; i < grid.height; i++) {
+    for (j = 0; j < grid.width; j++) {
+      if (getSquare(j, i) !== grid.EMPTY) {
+        visit(j, i, null);
+      }
+    }
+  }
+
+  return paths.map(joinPath);
+}
+
+function pathsToSVG(paths) {
+  var NS = 'http://www.w3.org/2000/svg';
+  var svg = document.createElementNS(NS, 'svg');
+  var svgWidth = grid.width * SQUARE_SIZE + 1;
+  var svgHeight = grid.height * SQUARE_SIZE + 1;
+
+  svg.setAttribute('width', svgWidth);
+  svg.setAttribute('height', svgHeight);
+  svg.setAttribute('viewPort', '0 0 ' + svgWidth + ' ' + svgHeight);
+
+  paths.forEach(function(path) {
+    var polygon = document.createElementNS(NS, 'polygon');
+    var points = path.slice(0, -1).map(function(point) {
+      return point.x + ',' + point.y;
+    }).join(' ');
+    polygon.setAttribute('points', points);
+    svg.appendChild(polygon);
+  });
+
+  return svg;
+}
+
+var SQUARE_SIZE = 16;
+
+var grid = asciiToGrid(document.getElementById('hi').textContent.trim());
+
+var paths = gridToPaths(grid, SQUARE_SIZE, 0.5);
+
+document.body.appendChild(pathsToSVG(paths));
+</script>
