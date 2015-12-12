@@ -74,7 +74,7 @@ function gridToPaths(grid, squareSize, offset) {
       throw new Error("assertion failure: unable to join segment");
     }
 
-    for (var iter = 0; iter < 10000; i++) {
+    for (var iter = 0; iter < 10000; iter++) {
       if (path.length == 1) return path[0];
       path = joinOneSegment(path[0], path.slice(1));
     }
