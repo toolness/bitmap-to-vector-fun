@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<style>
+svg path {
+  fill: none;
+  stroke: red;
+}
+</style>
 <title>Bitmap to Vector Fun</title>
 <p>Hello.</p>
 <pre id="hi">
 *    *
 *    
-***  *
-* *  *
-* *  *
+***  * ***
+* *  * * *
+* *  * ***
 </pre>
 <script>
 function asciiToGrid(text) {
@@ -46,40 +52,29 @@ function gridToPaths(grid, squareSize, offset) {
 
   var addToPath = function(pathId, x1, y1, x2, y2) {
     var path = paths[pathId];
+    var doMove = false;
+    var lastCmd;
 
-    path.push([{x: x1, y: y1}, {x: x2, y: y2}]);
-  };
-
-  var joinPath = function(path) {
-    function joinOneSegment(a, paths) {
-      var start = a[0];
-      var end = a[a.length - 1];
-
-      for (var i = 0; i < paths.length; i++) {
-        var otherPath = paths[i];
-        var otherStart = otherPath[0];
-        var otherEnd = otherPath[otherPath.length - 1];
-
-        if (start.x == otherEnd.x && start.y == otherEnd.y) {
-          paths[i] = otherPath.concat(a.slice(1));
-          console.log("found another path that ends where we start");
-          return paths;
-        } else if (otherStart.x == end.x && otherStart.y == end.y) {
-          paths[i] = a.concat(otherPath.slice(1));
-          console.log("found another path that starts where we end");
-          return paths;
-        }
-      }
-
-      throw new Error("assertion failure: unable to join segment");
+    if (path.length == 0) {
+      doMove = true;
+    } else {
+      lastCmd = path[path.length - 1];
+      if (!(lastCmd.x == x1 && lastCmd.y == y1))
+        doMove = true;
     }
 
-    for (var iter = 0; iter < 10000; iter++) {
-      if (path.length == 1) return path[0];
-      path = joinOneSegment(path[0], path.slice(1));
+    if (doMove) {
+      path.push({
+        cmd: 'M',
+        x: x1,
+        y: y1
+      });
     }
-
-    throw new Error("assertion failure: too many iterations");
+    path.push({
+      cmd: 'L',
+      x: x2,
+      y: y2
+    });
   };
 
   var visit = function(x, y, pathId) {
@@ -149,7 +144,7 @@ function gridToPaths(grid, squareSize, offset) {
     }
   }
 
-  return paths.map(joinPath);
+  return paths;
 }
 
 function pathsToSVG(paths) {
@@ -163,12 +158,12 @@ function pathsToSVG(paths) {
   svg.setAttribute('viewPort', '0 0 ' + svgWidth + ' ' + svgHeight);
 
   paths.forEach(function(path) {
-    var polygon = document.createElementNS(NS, 'polygon');
-    var points = path.slice(0, -1).map(function(point) {
-      return point.x + ',' + point.y;
-    }).join(' ');
-    polygon.setAttribute('points', points);
-    svg.appendChild(polygon);
+    var svgPath = document.createElementNS(NS, 'path');
+    var d = path.map(function(desc) {
+      return desc.cmd + desc.x + ',' + desc.y;
+    }).join('');
+    svgPath.setAttribute('d', d);
+    svg.appendChild(svgPath);
   });
 
   return svg;
