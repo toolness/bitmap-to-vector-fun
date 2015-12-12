@@ -43,6 +43,34 @@ function asciiToGrid(text) {
   return grid;
 }
 
+function unifySubpaths(subpaths) {
+  function unifyOne() {
+    for (var i = 0; i < subpaths.length; i++) {
+      for (var j = 0; j < subpaths.length; j++) {
+        if (j == i) continue;
+
+        var iStart = subpaths[i][0];
+        var iEnd = subpaths[i][subpaths[i].length - 1];
+        var jStart = subpaths[j][0];
+        var jEnd = subpaths[j][subpaths[j].length - 1];
+
+        if (iStart.x == jEnd.x && iStart.y == jEnd.y) {
+          // Append subpath i to subpath j, remove subpath i
+          subpaths[j].push.apply(subpaths[j], subpaths[i].slice(1));
+          subpaths.splice(i, 1);
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  while (unifyOne()) {}
+
+  return subpaths;
+}
+
 function gridToPaths(grid, squareSize, offset) {
   offset = offset || 0;
 
@@ -140,7 +168,7 @@ function gridToPaths(grid, squareSize, offset) {
     }
   }
 
-  return paths;
+  return paths.map(unifySubpaths);
 }
 
 function pathsToSVG(paths) {
@@ -153,9 +181,9 @@ function pathsToSVG(paths) {
   svg.setAttribute('height', svgHeight);
   svg.setAttribute('viewPort', '0 0 ' + svgWidth + ' ' + svgHeight);
 
-  paths.forEach(function(path) {
+  paths.forEach(function(subpaths) {
     var svgPath = document.createElementNS(NS, 'path');
-    var d = path.map(function(subpath) {
+    var d = subpaths.map(function(subpath) {
       var moveTo = 'M' + subpath[0].x + ',' + subpath[0].y;
 
       return moveTo + subpath.slice(1).map(function lineTo(point) {
