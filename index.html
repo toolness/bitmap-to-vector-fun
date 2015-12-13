@@ -184,7 +184,9 @@ function gridToPaths(grid, squareSize, offset) {
     }
   }
 
-  return paths.map(unifySubpaths);
+  return paths.map(unifySubpaths).map(function(subpaths) {
+    return subpaths.map(unifyStraightLines);
+  });
 }
 
 function pathsToSVG(paths, options) {
@@ -202,7 +204,7 @@ function pathsToSVG(paths, options) {
 
   paths.forEach(function(subpaths) {
     var svgPath = document.createElementNS(NS, 'path');
-    var d = subpaths.map(unifyStraightLines).map(function(subpath) {
+    var d = subpaths.map(function(subpath) {
       var moveTo = 'M' + subpath[0].x + ',' + subpath[0].y + ' ';
 
       debugPoints.push(subpath[0]);
