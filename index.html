@@ -8,7 +8,7 @@ svg path {
 </style>
 <title>Bitmap to Vector Fun</title>
 <p>Hello.</p>
-<pre id="hi">
+<pre id="ascii-art">
     *   *     ***
     *         *
 *** *** * *** * ***
@@ -233,7 +233,7 @@ function pathsToSVG(paths, options) {
 
 var SQUARE_SIZE = 16;
 
-var grid = asciiToGrid(document.getElementById('hi').textContent);
+var grid = asciiToGrid(document.getElementById('ascii-art').textContent);
 
 var paths = gridToPaths(grid, SQUARE_SIZE, 0);
 
