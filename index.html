@@ -19,13 +19,13 @@ svg.handmade g.fills path {
 <title>Bitmap to Vector Fun</title>
 <h1>Bitmap to Vector Fun</h1>
 <p>This page takes the following ascii art:</p>
-<pre id="ascii-art">
+<textarea id="ascii-art" rows="10" cols="80">
     *   *     ****
     *         *
 *** *** * *** * ***
 * * * * * * * *  *
 *** * * * *** ****
-</pre>
+</textarea>
 <p>And converts it into vector form:</p>
 <div id="vector-holder"></div>
 <p>Once in vector form, it can be altered by code to look more curvy:</p>
@@ -149,22 +149,31 @@ function createSVGCirclesAtVertices(paths, radius) {
 
 var SQUARE_SIZE = 16;
 
-var grid = asciiToGrid(document.getElementById('ascii-art').textContent);
+var asciiArt = document.getElementById('ascii-art');
+var grid, paths;
 
-var paths = gridToPaths(grid, SQUARE_SIZE, 5);
+function render() {
+  grid = asciiToGrid(asciiArt.value);
 
-var vectorSVG = createSVGElement(paths.width, paths.height);
+  paths = gridToPaths(grid, SQUARE_SIZE, 5);
 
-vectorSVG.appendChild(createStraightSVGPaths(paths));
-vectorSVG.appendChild(createSVGCirclesAtVertices(paths, 2));
+  var vectorSVG = createSVGElement(paths.width, paths.height);
+  var vectorHolder = document.getElementById('vector-holder');
 
-document.getElementById('vector-holder').appendChild(vectorSVG);
+  vectorSVG.appendChild(createStraightSVGPaths(paths));
+  vectorSVG.appendChild(createSVGCirclesAtVertices(paths, 2));
 
-var curvySVG = createSVGElement(paths.width, paths.height);
+  vectorHolder.textContent = '';
+  vectorHolder.appendChild(vectorSVG);
 
-curvySVG.appendChild(createCurvySVGPaths(paths, 4));
+  var curvySVG = createSVGElement(paths.width, paths.height);
+  var curvyHolder = document.getElementById('curvy-holder');
 
-document.getElementById('curvy-holder').appendChild(curvySVG);
+  curvySVG.appendChild(createCurvySVGPaths(paths, 4));
+
+  curvyHolder.textContent = '';
+  curvyHolder.appendChild(curvySVG);
+}
 
 function makeHandmadeSVG() {
   var holder = document.getElementById('handmade-holder');
@@ -184,6 +193,8 @@ function makeHandmadeSVG() {
   holder.appendChild(handmadeSVG);
 }
 
+render();
 makeHandmadeSVG();
 setInterval(makeHandmadeSVG, 100);
+asciiArt.addEventListener('keyup', render, false);
 </script>
