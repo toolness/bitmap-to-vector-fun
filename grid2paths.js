@@ -160,3 +160,5 @@ var gridToPaths = (function() {
     };
   };
 })();
+
+if (typeof(module) !== 'undefined') module.exports = gridToPaths;

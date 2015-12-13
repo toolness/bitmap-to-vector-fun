@@ -24,3 +24,5 @@ function asciiToGrid(text) {
 
   return grid;
 }
+
+if (typeof(module) !== 'undefined') module.exports = asciiToGrid;

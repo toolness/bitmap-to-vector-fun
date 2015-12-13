@@ -15,6 +15,15 @@ svg.handmade g.fills path {
   fill: salmon;
   stroke: none;
 }
+
+@font-face {
+  font-family: 'My Font';
+  src: url("font/myfont.ttf");
+}
+
+.bitmap-font {
+  font-family: 'My Font';
+}
 </style>
 <title>Bitmap to Vector Fun</title>
 <h1>Bitmap to Vector Fun</h1>
@@ -32,6 +41,8 @@ svg.handmade g.fills path {
 <div id="curvy-holder"></div>
 <p>Or kind of handmade:</p>
 <div id="handmade-holder"></div>
+<p>It can also be used to make web fonts:</p>
+<div class="bitmap-font">abcder</div>
 <script src="ascii2grid.js"></script>
 <script src="grid2paths.js"></script>
 <script>
