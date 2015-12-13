@@ -187,11 +187,14 @@ function gridToPaths(grid, squareSize, offset) {
   return paths.map(unifySubpaths);
 }
 
-function pathsToSVG(paths) {
+function pathsToSVG(paths, options) {
+  options = options || {};
+
   var NS = 'http://www.w3.org/2000/svg';
   var svg = document.createElementNS(NS, 'svg');
   var svgWidth = grid.width * SQUARE_SIZE + 1;
   var svgHeight = grid.height * SQUARE_SIZE + 1;
+  var debugPoints = [];
 
   svg.setAttribute('width', svgWidth);
   svg.setAttribute('height', svgHeight);
@@ -202,7 +205,10 @@ function pathsToSVG(paths) {
     var d = subpaths.map(unifyStraightLines).map(function(subpath) {
       var moveTo = 'M' + subpath[0].x + ',' + subpath[0].y + ' ';
 
+      debugPoints.push(subpath[0]);
+
       return moveTo + subpath.slice(1).map(function lineTo(point) {
+        debugPoints.push(point);
 //        return 'Q ' + (point.x + 8) + ',' + (point.y + 8) + ' ' +
 //               point.x + ',' + point.y;
         return 'L' + point.x + ',' + point.y;
@@ -211,6 +217,16 @@ function pathsToSVG(paths) {
     svgPath.setAttribute('d', d);
     svg.appendChild(svgPath);
   });
+
+  if (options.debug) {
+    debugPoints.forEach(function(point) {
+      var circle = document.createElementNS(NS, 'circle');
+      circle.setAttribute('cx', point.x);
+      circle.setAttribute('cy', point.y);
+      circle.setAttribute('r', SQUARE_SIZE * 0.2);
+      svg.appendChild(circle);
+    });
+  }
 
   return svg;
 }
@@ -221,5 +237,7 @@ var grid = asciiToGrid(document.getElementById('hi').textContent);
 
 var paths = gridToPaths(grid, SQUARE_SIZE, 0);
 
-document.body.appendChild(pathsToSVG(paths));
+document.body.appendChild(pathsToSVG(paths, {
+  debug: true
+}));
 </script>
