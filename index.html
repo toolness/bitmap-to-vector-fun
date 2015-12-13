@@ -5,16 +5,33 @@ svg path {
   fill: red;
   stroke: black;
 }
+
+svg.handmade g.outlines path {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.5);
+}
+
+svg.handmade g.fills path {
+  fill: salmon;
+  stroke: none;
+}
 </style>
 <title>Bitmap to Vector Fun</title>
-<p>Hello.</p>
+<h1>Bitmap to Vector Fun</h1>
+<p>This page takes the following ascii art:</p>
 <pre id="ascii-art">
-    *   *     ***
+    *   *     ****
     *         *
 *** *** * *** * ***
 * * * * * * * *  *
 *** * * * *** ****
 </pre>
+<p>And converts it into vector form:</p>
+<div id="vector-holder"></div>
+<p>Once in vector form, it can be altered by code to look more curvy:</p>
+<div id="curvy-holder"></div>
+<p>Or kind of handmade:</p>
+<div id="handmade-holder"></div>
 <script src="ascii2grid.js"></script>
 <script src="grid2paths.js"></script>
 <script>
@@ -136,13 +153,30 @@ var grid = asciiToGrid(document.getElementById('ascii-art').textContent);
 
 var paths = gridToPaths(grid, SQUARE_SIZE, 5);
 
-var svg = createSVGElement(paths.width, paths.height);
+var vectorSVG = createSVGElement(paths.width, paths.height);
 
-svg.appendChild(createStraightSVGPaths(paths));
-//svg.appendChild(createCurvySVGPaths(paths, 4));
+vectorSVG.appendChild(createStraightSVGPaths(paths));
+vectorSVG.appendChild(createSVGCirclesAtVertices(paths, 2));
 
-//svg.appendChild(createJitterySVGPaths(paths, 4));
-svg.appendChild(createSVGCirclesAtVertices(paths, 2));
+document.getElementById('vector-holder').appendChild(vectorSVG);
 
-document.body.appendChild(svg);
+var curvySVG = createSVGElement(paths.width, paths.height);
+
+curvySVG.appendChild(createCurvySVGPaths(paths, 4));
+
+document.getElementById('curvy-holder').appendChild(curvySVG);
+
+var handmadeSVG = createSVGElement(paths.width, paths.height);
+
+var outlines = createJitterySVGPaths(paths, 4);
+var fills = createJitterySVGPaths(paths, 4);
+
+handmadeSVG.setAttribute('class', 'handmade');
+outlines.setAttribute('class', 'outlines');
+fills.setAttribute('class', 'fills');
+
+handmadeSVG.appendChild(fills);
+handmadeSVG.appendChild(outlines);
+
+document.getElementById('handmade-holder').appendChild(handmadeSVG);
 </script>
