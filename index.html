@@ -79,6 +79,27 @@ function createCurvyPaths(svg, paths, curveAmount) {
   });
 }
 
+function createJitteryPaths(svg, paths, jitterAmount) {
+  paths.paths.forEach(function(subpaths) {
+    var svgPath = document.createElementNS(SVG_NS, 'path');
+    var d = subpaths.map(function(subpath) {
+      var moveTo = 'M' + subpath[0].x + ',' + subpath[0].y + ' ';
+
+      return moveTo + subpath.slice(1).map(function lineTo(point, i) {
+        var cx = point.x + Math.random() * jitterAmount;
+        var cy = point.y + Math.random() * jitterAmount;
+
+        var x = point.x + Math.random() * jitterAmount;
+        var y = point.y + Math.random() * jitterAmount;
+
+        return 'Q ' + cx + ',' + cy + ' ' + x + ',' + y;
+      }).join(' ') + 'z';
+    }).join(' ');
+    svgPath.setAttribute('d', d);
+    svg.appendChild(svgPath);
+  });
+}
+
 function showVertices(svg, paths, radius) {
   paths.paths.forEach(function(subpaths) {
     subpaths.forEach(function(subpath) {
@@ -103,6 +124,7 @@ var svg = createSVGElement(paths.width, paths.height);
 
 //createStraightPaths(svg, paths);
 createCurvyPaths(svg, paths, 4);
+//createJitteryPaths(svg, paths, 4);
 //showVertices(svg, paths, SQUARE_SIZE * 0.2);
 
 document.body.appendChild(svg);
