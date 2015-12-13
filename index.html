@@ -30,7 +30,9 @@ function createSVGElement(width, height) {
   return svg;
 }
 
-function createStraightPaths(svg, paths) {
+function createStraightSVGPaths(paths) {
+  var g = document.createElementNS(SVG_NS, 'g');
+
   paths.paths.forEach(function(subpaths) {
     var svgPath = document.createElementNS(SVG_NS, 'path');
     var d = subpaths.map(function(subpath) {
@@ -41,11 +43,15 @@ function createStraightPaths(svg, paths) {
       }).join(' ') + 'z';
     }).join(' ');
     svgPath.setAttribute('d', d);
-    svg.appendChild(svgPath);
+    g.appendChild(svgPath);
   });
+
+  return g;
 }
 
-function createCurvyPaths(svg, paths, curveAmount) {
+function createCurvySVGPaths(paths, curveAmount) {
+  var g = document.createElementNS(SVG_NS, 'g');
+
   paths.paths.forEach(function(subpaths) {
     var svgPath = document.createElementNS(SVG_NS, 'path');
     var d = subpaths.map(function(subpath) {
@@ -75,11 +81,15 @@ function createCurvyPaths(svg, paths, curveAmount) {
       }).join(' ') + 'z';
     }).join(' ');
     svgPath.setAttribute('d', d);
-    svg.appendChild(svgPath);
+    g.appendChild(svgPath);
   });
+
+  return g;
 }
 
-function createJitteryPaths(svg, paths, jitterAmount) {
+function createJitterySVGPaths(paths, jitterAmount) {
+  var g = document.createElementNS(SVG_NS, 'g');
+
   paths.paths.forEach(function(subpaths) {
     var svgPath = document.createElementNS(SVG_NS, 'path');
     var d = subpaths.map(function(subpath) {
@@ -96,11 +106,15 @@ function createJitteryPaths(svg, paths, jitterAmount) {
       }).join(' ') + 'z';
     }).join(' ');
     svgPath.setAttribute('d', d);
-    svg.appendChild(svgPath);
+    g.appendChild(svgPath);
   });
+
+  return g;
 }
 
-function showVertices(svg, paths, radius) {
+function createSVGCirclesAtVertices(paths, radius) {
+  var g = document.createElementNS(SVG_NS, 'g');
+
   paths.paths.forEach(function(subpaths) {
     subpaths.forEach(function(subpath) {
       subpath.forEach(function(point) {
@@ -108,10 +122,12 @@ function showVertices(svg, paths, radius) {
         circle.setAttribute('cx', point.x);
         circle.setAttribute('cy', point.y);
         circle.setAttribute('r', radius);
-        svg.appendChild(circle);
+        g.appendChild(circle);
       });
     });
   });
+
+  return g;
 }
 
 var SQUARE_SIZE = 16;
@@ -122,10 +138,11 @@ var paths = gridToPaths(grid, SQUARE_SIZE, 5);
 
 var svg = createSVGElement(paths.width, paths.height);
 
-//createStraightPaths(svg, paths);
-createCurvyPaths(svg, paths, 4);
-//createJitteryPaths(svg, paths, 4);
-//showVertices(svg, paths, SQUARE_SIZE * 0.2);
+svg.appendChild(createStraightSVGPaths(paths));
+//svg.appendChild(createCurvySVGPaths(paths, 4));
+
+//svg.appendChild(createJitterySVGPaths(paths, 4));
+svg.appendChild(createSVGCirclesAtVertices(paths, 2));
 
 document.body.appendChild(svg);
 </script>
