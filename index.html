@@ -2,7 +2,7 @@
 <meta charset="utf-8">
 <style>
 svg path {
-  fill: blue;
+  fill: red;
   stroke: red;
 }
 </style>
@@ -41,6 +41,22 @@ function asciiToGrid(text) {
   };
 
   return grid;
+}
+
+function unifyStraightLines(path) {
+  return path.reduce(function(pathSoFar, point) {
+    if (pathSoFar.length < 2) return pathSoFar.concat(point);
+
+    var prevPoint = pathSoFar[pathSoFar.length - 1];
+    var prevPrevPoint = pathSoFar[pathSoFar.length - 2];
+
+    if ((prevPrevPoint.x == prevPoint.x && prevPoint.x == point.x) ||
+        (prevPrevPoint.y == prevPoint.y && prevPoint.y == point.y)) {
+      return pathSoFar.slice(0, -1).concat(point);
+    }
+
+    return pathSoFar.concat(point);
+  }, []);
 }
 
 function unifySubpaths(subpaths) {
@@ -183,13 +199,15 @@ function pathsToSVG(paths) {
 
   paths.forEach(function(subpaths) {
     var svgPath = document.createElementNS(NS, 'path');
-    var d = subpaths.map(function(subpath) {
-      var moveTo = 'M' + subpath[0].x + ',' + subpath[0].y;
+    var d = subpaths.map(unifyStraightLines).map(function(subpath) {
+      var moveTo = 'M' + subpath[0].x + ',' + subpath[0].y + ' ';
 
       return moveTo + subpath.slice(1).map(function lineTo(point) {
+//        return 'Q ' + (point.x + 8) + ',' + (point.y + 8) + ' ' +
+//               point.x + ',' + point.y;
         return 'L' + point.x + ',' + point.y;
-      }).join('');
-    }).join('');
+      }).join(' ');
+    }).join(' ');
     svgPath.setAttribute('d', d);
     svg.appendChild(svgPath);
   });
@@ -201,7 +219,7 @@ var SQUARE_SIZE = 16;
 
 var grid = asciiToGrid(document.getElementById('hi').textContent);
 
-var paths = gridToPaths(grid, SQUARE_SIZE, 0.5);
+var paths = gridToPaths(grid, SQUARE_SIZE, 0);
 
 document.body.appendChild(pathsToSVG(paths));
 </script>
