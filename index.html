@@ -166,17 +166,24 @@ curvySVG.appendChild(createCurvySVGPaths(paths, 4));
 
 document.getElementById('curvy-holder').appendChild(curvySVG);
 
-var handmadeSVG = createSVGElement(paths.width, paths.height);
+function makeHandmadeSVG() {
+  var holder = document.getElementById('handmade-holder');
+  var handmadeSVG = createSVGElement(paths.width, paths.height);
 
-var outlines = createJitterySVGPaths(paths, 4);
-var fills = createJitterySVGPaths(paths, 4);
+  var outlines = createJitterySVGPaths(paths, 4);
+  var fills = createJitterySVGPaths(paths, 4);
 
-handmadeSVG.setAttribute('class', 'handmade');
-outlines.setAttribute('class', 'outlines');
-fills.setAttribute('class', 'fills');
+  handmadeSVG.setAttribute('class', 'handmade');
+  outlines.setAttribute('class', 'outlines');
+  fills.setAttribute('class', 'fills');
 
-handmadeSVG.appendChild(fills);
-handmadeSVG.appendChild(outlines);
+  handmadeSVG.appendChild(fills);
+  handmadeSVG.appendChild(outlines);
 
-document.getElementById('handmade-holder').appendChild(handmadeSVG);
+  holder.textContent = '';
+  holder.appendChild(handmadeSVG);
+}
+
+makeHandmadeSVG();
+setInterval(makeHandmadeSVG, 100);
 </script>
