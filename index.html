@@ -16,6 +16,8 @@ svg path {
 *** * * * *** ****
 </pre>
 <script>
+var SVG_NS = 'http://www.w3.org/2000/svg';
+
 function asciiToGrid(text) {
   var lines = text.split('\n');
   var grid = [];
@@ -184,33 +186,28 @@ function gridToPaths(grid, squareSize, offset) {
     }
   }
 
-  return paths.map(unifySubpaths).map(function(subpaths) {
-    return subpaths.map(unifyStraightLines);
-  });
+  return {
+    width: grid.width * squareSize + offset * 2,
+    height: grid.height * squareSize + offset * 2,
+    paths: paths.map(unifySubpaths).map(function(subpaths) {
+      return subpaths.map(unifyStraightLines);
+    })
+  };
 }
 
-function pathsToSVG(paths, options) {
-  options = options || {};
+function pathsToSVG(paths) {
+  var svg = document.createElementNS(SVG_NS, 'svg');
 
-  var NS = 'http://www.w3.org/2000/svg';
-  var svg = document.createElementNS(NS, 'svg');
-  var svgWidth = grid.width * SQUARE_SIZE + 1;
-  var svgHeight = grid.height * SQUARE_SIZE + 1;
-  var debugPoints = [];
+  svg.setAttribute('width', paths.width);
+  svg.setAttribute('height', paths.height);
+  svg.setAttribute('viewPort', '0 0 ' + paths.width + ' ' + paths.height);
 
-  svg.setAttribute('width', svgWidth);
-  svg.setAttribute('height', svgHeight);
-  svg.setAttribute('viewPort', '0 0 ' + svgWidth + ' ' + svgHeight);
-
-  paths.forEach(function(subpaths) {
-    var svgPath = document.createElementNS(NS, 'path');
+  paths.paths.forEach(function(subpaths) {
+    var svgPath = document.createElementNS(SVG_NS, 'path');
     var d = subpaths.map(function(subpath) {
       var moveTo = 'M' + subpath[0].x + ',' + subpath[0].y + ' ';
 
-      debugPoints.push(subpath[0]);
-
       return moveTo + subpath.slice(1).map(function lineTo(point) {
-        debugPoints.push(point);
 //        return 'Q ' + (point.x + 8) + ',' + (point.y + 8) + ' ' +
 //               point.x + ',' + point.y;
         return 'L' + point.x + ',' + point.y;
@@ -220,26 +217,32 @@ function pathsToSVG(paths, options) {
     svg.appendChild(svgPath);
   });
 
-  if (options.debug) {
-    debugPoints.forEach(function(point) {
-      var circle = document.createElementNS(NS, 'circle');
-      circle.setAttribute('cx', point.x);
-      circle.setAttribute('cy', point.y);
-      circle.setAttribute('r', SQUARE_SIZE * 0.2);
-      svg.appendChild(circle);
-    });
-  }
-
   return svg;
+}
+
+function showVertices(svg, paths, radius) {
+  paths.paths.forEach(function(subpaths) {
+    subpaths.forEach(function(subpath) {
+      subpath.forEach(function(point) {
+        var circle = document.createElementNS(SVG_NS, 'circle');
+        circle.setAttribute('cx', point.x);
+        circle.setAttribute('cy', point.y);
+        circle.setAttribute('r', radius);
+        svg.appendChild(circle);
+      });
+    });
+  });
 }
 
 var SQUARE_SIZE = 16;
 
 var grid = asciiToGrid(document.getElementById('ascii-art').textContent);
 
-var paths = gridToPaths(grid, SQUARE_SIZE, 0);
+var paths = gridToPaths(grid, SQUARE_SIZE, 5);
 
-document.body.appendChild(pathsToSVG(paths, {
-  debug: true
-}));
+var svg = pathsToSVG(paths);
+
+showVertices(svg, paths, SQUARE_SIZE * 0.2);
+
+document.body.appendChild(svg);
 </script>
