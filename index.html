@@ -46,7 +46,7 @@ function asciiToGrid(text) {
 }
 
 function unifyStraightLines(path) {
-  return path.reduce(function(pathSoFar, point) {
+  function unify(pathSoFar, point) {
     if (pathSoFar.length < 2) return pathSoFar.concat(point);
 
     var prevPoint = pathSoFar[pathSoFar.length - 1];
@@ -58,7 +58,18 @@ function unifyStraightLines(path) {
     }
 
     return pathSoFar.concat(point);
-  }, []);
+  }
+
+  var newPath;
+
+  while (true) {
+    newPath = path.reduce(unify, []);
+    if (newPath.length === path.length)
+      return newPath;
+    newPath.push(newPath[0]);
+    newPath.splice(0, 1);
+    path = newPath;
+  }
 }
 
 function unifySubpaths(subpaths) {
