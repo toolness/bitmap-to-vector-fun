@@ -3,7 +3,7 @@
 <style>
 svg path {
   fill: red;
-  stroke: red;
+  stroke: black;
 }
 </style>
 <title>Bitmap to Vector Fun</title>
@@ -222,7 +222,7 @@ function pathsToSVG(paths) {
 //        return 'Q ' + (point.x + 8) + ',' + (point.y + 8) + ' ' +
 //               point.x + ',' + point.y;
         return 'L' + point.x + ',' + point.y;
-      }).join(' ');
+      }).join(' ') + 'z';
     }).join(' ');
     svgPath.setAttribute('d', d);
     svg.appendChild(svgPath);
