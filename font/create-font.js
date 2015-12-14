@@ -4,13 +4,13 @@ var svg2ttf = require('svg2ttf');
 var asciiToGrid = require('../ascii2grid');
 var gridToPaths = require('../grid2paths');
 
-var toSVGPath = function(lines) {
+var toSVGPath = function(lines, fontMeta) {
   lines = lines.slice();
   lines.reverse();
-  var yOfs = -40;
-  var xOfs = 180;
+  var yOfs = fontMeta.yOfs;
+  var xOfs = fontMeta.xOfs;
   var grid = asciiToGrid(lines.join('\n'));
-  var paths = gridToPaths(grid, 130, 0);
+  var paths = gridToPaths(grid, fontMeta.pixelSize, 0);
   var d = paths.paths.map(function(subpaths) {
     return subpaths.map(function(subpath) {
       var moveTo = 'M' + (subpath[0].x + xOfs) + ',' + (subpath[0].y + yOfs);
@@ -25,22 +25,26 @@ var toSVGPath = function(lines) {
 };
 
 var jsonToSVG = function(glyphs) {
+  var fontMeta = glyphs._meta;
   var svg = [
-    '<font horiz-adv-x="1000">',
-    '<font-face font-family="My Font" font-style="normal"',
-    '           units-per-em="1000" ',
-    '           ascent="700" descent="300">',
+    '<font horiz-adv-x="' + fontMeta.unitsPerEm + '">',
+    '<font-face font-family="' + fontMeta.name + '" font-style="normal"',
+    '           units-per-em="' + fontMeta.unitsPerEm + '" ',
+    '           ascent="' + fontMeta.ascent + '" ',
+    '           descent="' + fontMeta.descent + '">',
     '  <font-face-src>',
-    '    <font-face-name name="My Font"/>',
+    '    <font-face-name name="' + fontMeta.name + '"/>',
     '  </font-face-src>',
     '</font-face>'
   ];
 
   Object.keys(glyphs).forEach(function(glyphName) {
+    if (glyphName == '_meta') return;
+
     var glyphData = glyphs[glyphName];
 
     svg.push('<glyph unicode="' + glyphName + '" d="' +
-             toSVGPath(glyphData) + '"></glyph>');
+             toSVGPath(glyphData, fontMeta) + '"></glyph>');
   });
 
   svg.push('</font>');

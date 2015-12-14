@@ -1,4 +1,13 @@
 {
+  "_meta": {
+    "name": "My Font",
+    "unitsPerEm": 1000,
+    "ascent": 700,
+    "descent": 300,
+    "pixelSize": 130,
+    "xOfs": 180,
+    "yOfs": -40
+  },
   "A": [
     "*****",
     "*   *",
