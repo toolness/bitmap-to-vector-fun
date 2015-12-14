@@ -3,25 +3,16 @@ var svg2ttf = require('svg2ttf');
 
 var asciiToGrid = require('../ascii2grid');
 var gridToPaths = require('../grid2paths');
+var pathsToSVGDesc = require('../paths2svgdesc');
 
-var toSVGPath = function(lines, fontMeta) {
+var toSVGPathDesc = function(lines, fontMeta) {
   lines = lines.slice();
   lines.reverse();
-  var yOfs = fontMeta.yOfs;
-  var xOfs = fontMeta.xOfs;
+
   var grid = asciiToGrid(lines.join('\n'));
   var paths = gridToPaths(grid, fontMeta.pixelSize, 0);
-  var d = paths.paths.map(function(subpaths) {
-    return subpaths.map(function(subpath) {
-      var moveTo = 'M' + (subpath[0].x + xOfs) + ',' + (subpath[0].y + yOfs);
 
-      return moveTo + subpath.slice(1).map(function lineTo(point, i) {
-        return 'L' + (point.x + xOfs) + ',' + (point.y + yOfs);
-      }).join('') + 'z';
-    }).join('');
-  }).join('');
-
-  return d;
+  return pathsToSVGDesc(paths, fontMeta.xOfs, fontMeta.yOfs);
 };
 
 var jsonToSVG = function(glyphs) {
@@ -44,7 +35,7 @@ var jsonToSVG = function(glyphs) {
     var glyphData = glyphs[glyphName];
 
     svg.push('<glyph unicode="' + glyphName + '" d="' +
-             toSVGPath(glyphData, fontMeta) + '"></glyph>');
+             toSVGPathDesc(glyphData, fontMeta) + '"></glyph>');
   });
 
   svg.push('</font>');

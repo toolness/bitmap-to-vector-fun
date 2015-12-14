@@ -66,6 +66,7 @@ textarea {
 <p><a href="http://github.com/toolness/bitmap-to-vector-fun">Learn more on GitHub.</a></p>
 <script src="ascii2grid.js"></script>
 <script src="grid2paths.js"></script>
+<script src="paths2svgdesc.js"></script>
 <script>
 var SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -84,14 +85,7 @@ function createStraightSVGPaths(paths) {
 
   paths.paths.forEach(function(subpaths) {
     var svgPath = document.createElementNS(SVG_NS, 'path');
-    var d = subpaths.map(function(subpath) {
-      var moveTo = 'M' + subpath[0].x + ',' + subpath[0].y + ' ';
-
-      return moveTo + subpath.slice(1).map(function lineTo(point, i) {
-        return 'L' + point.x + ',' + point.y;
-      }).join(' ') + 'z';
-    }).join(' ');
-    svgPath.setAttribute('d', d);
+    svgPath.setAttribute('d', pathsToSVGDesc({paths: [subpaths]}));
     g.appendChild(svgPath);
   });
 
