@@ -35,6 +35,8 @@ textarea {
   text-transform: uppercase;
   padding: 1em;
   border: 2px solid black;
+  width: 25em;
+  height: 10em;
 }
 
 .bitmap-font {
@@ -46,7 +48,7 @@ textarea {
 <title>Bitmap to Vector Fun</title>
 <h1>Bitmap to Vector Fun</h1>
 <p>This page takes the following ascii art:</p>
-<textarea id="ascii-art" rows="10" cols="35">
+<textarea id="ascii-art">
     *   *     ****
     *         *
 *** *** * *** * ***
@@ -60,8 +62,8 @@ textarea {
 <p>Or kind of handmade:</p>
 <div id="handmade-holder"></div>
 <p>It can also be used to make web fonts:</p>
-<div class="bitmap-font">ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
-<p><a href="http://github.com/toolness/bitmap-to-vector-fun">Learn more on GitHub</a></p>
+<div class="bitmap-font">ABCDEFGHIJKLMNOPQRSTUVWXYZ:</div>
+<p><a href="http://github.com/toolness/bitmap-to-vector-fun">Learn more on GitHub.</a></p>
 <script src="ascii2grid.js"></script>
 <script src="grid2paths.js"></script>
 <script>
