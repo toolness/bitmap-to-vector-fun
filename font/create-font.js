@@ -4,62 +4,6 @@ var svg2ttf = require('svg2ttf');
 var asciiToGrid = require('../ascii2grid');
 var gridToPaths = require('../grid2paths');
 
-var a = [
-  '*****',
-  '*   *',
-  '*****',
-  '*   *',
-  '*   *',
-];
-
-var b = [
-  '****',
-  '*   *',
-  '**** ',
-  '*   *',
-  '**** '
-];
-
-var c = [
-  '*****',
-  '*   ',
-  '*   ',
-  '*   ',
-  '*****'
-];
-
-var d = [
-  '****',
-  '*   *',
-  '*   *',
-  '*   *',
-  '**** '
-];
-
-var e = [
-  '*****',
-  '*   ',
-  '*****',
-  '*',
-  '*****'
-];
-
-var f = [
-  '*****',
-  '*   ',
-  '*****',
-  '*',
-  '*'
-];
-
-var r = [
-  '**** ',
-  '*   *',
-  '**** ',
-  '*  *',
-  '*   *',
-];
-
 var toSVGPath = function(lines) {
   lines = lines.slice();
   lines.reverse();
@@ -78,27 +22,34 @@ var toSVGPath = function(lines) {
   return d;
 };
 
-var svg = [
-  '<font id="Font1" horiz-adv-x="1000">',
-  '<font-face font-family="My Font" font-style="normal"',
-  '           units-per-em="1000" cap-height="600" x-height="400"',
-  '           ascent="700" descent="300"',
-  '           alphabetic="0" mathematical="350" ideographic="400" ',
-  '           hanging="500">',
-  '  <font-face-src>',
-  '    <font-face-name name="My Font"/>',
-  '  </font-face-src>',
-  '</font-face>',
-  '<glyph unicode="a" d="' + toSVGPath(a) + '"></glyph>',
-  '<glyph unicode="b" d="' + toSVGPath(b) + '"></glyph>',
-  '<glyph unicode="c" d="' + toSVGPath(c) + '"></glyph>',
-  '<glyph unicode="d" d="' + toSVGPath(d) + '"></glyph>',
-  '<glyph unicode="e" d="' + toSVGPath(e) + '"></glyph>',
-  '<glyph unicode="f" d="' + toSVGPath(f) + '"></glyph>',
-  '<glyph unicode="r" d="' + toSVGPath(r) + '"></glyph>',
-  '</font>',
-].join('\n');
+var jsonToSVG = function(glyphs) {
+  var svg = [
+    '<font id="Font1" horiz-adv-x="1000">',
+    '<font-face font-family="My Font" font-style="normal"',
+    '           units-per-em="1000" cap-height="600" x-height="400"',
+    '           ascent="700" descent="300"',
+    '           alphabetic="0" mathematical="350" ideographic="400" ',
+    '           hanging="500">',
+    '  <font-face-src>',
+    '    <font-face-name name="My Font"/>',
+    '  </font-face-src>',
+    '</font-face>'
+  ];
 
-var ttf = svg2ttf(svg, {});
+  Object.keys(glyphs).forEach(function(glyphName) {
+    var glyphData = glyphs[glyphName];
+
+    svg.push('<glyph unicode="' + glyphName + '" d="' +
+             toSVGPath(glyphData) + '"></glyph>');
+  });
+
+  svg.push('</font>');
+
+  return svg.join('\n');
+}
+
+var glyphs = JSON.parse(fs.readFileSync(__dirname + '/myfont.json', 'utf-8'));
+
+var ttf = svg2ttf(jsonToSVG(glyphs), {});
 
 fs.writeFileSync(__dirname + '/myfont.ttf', new Buffer(ttf.buffer));
