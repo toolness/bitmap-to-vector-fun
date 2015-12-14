@@ -48,8 +48,17 @@ var jsonToSVG = function(glyphs) {
   return svg.join('\n');
 }
 
-var glyphs = JSON.parse(fs.readFileSync(__dirname + '/myfont.json', 'utf-8'));
+var jsonFileToTTF = function(filename) {
+  var glyphs = JSON.parse(fs.readFileSync(filename, 'utf-8'));
+  var ttf = svg2ttf(jsonToSVG(glyphs), {});
 
-var ttf = svg2ttf(jsonToSVG(glyphs), {});
+  return new Buffer(ttf.buffer);
+};
 
-fs.writeFileSync(__dirname + '/myfont.ttf', new Buffer(ttf.buffer));
+exports.jsonFileToTTF = jsonFileToTTF;
+
+if (!module.parent) {
+  fs.writeFileSync(__dirname + '/myfont.ttf',
+                   jsonFileToTTF(__dirname + '/myfont.json'));
+  console.log('wrote myfont.ttf.');
+}
