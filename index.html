@@ -21,14 +21,19 @@ svg.handmade g.fills path {
   src: url("font/myfont.ttf");
 }
 
-.bitmap-font {
+html {
   font-family: 'My Font';
+  text-transform: uppercase;
+}
+
+.bitmap-font {
+  padding-left: 1em;
 }
 </style>
 <title>Bitmap to Vector Fun</title>
 <h1>Bitmap to Vector Fun</h1>
 <p>This page takes the following ascii art:</p>
-<textarea id="ascii-art" rows="10" cols="80">
+<textarea id="ascii-art" rows="10" cols="40">
     *   *     ****
     *         *
 *** *** * *** * ***
@@ -37,11 +42,11 @@ svg.handmade g.fills path {
 </textarea>
 <p>And converts it into vector form:</p>
 <div id="vector-holder"></div>
-<p>Once in vector form, it can be altered by code to look more curvy:</p>
+<p>Once in vector form it can be altered by code to look more curvy:</p>
 <div id="curvy-holder"></div>
 <p>Or kind of handmade:</p>
 <div id="handmade-holder"></div>
-<p>It can also be used to make web fonts:</p>
+<p>It can also be used to make web fonts like the one you are reading now:</p>
 <div class="bitmap-font">ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
 <script src="ascii2grid.js"></script>
 <script src="grid2paths.js"></script>
