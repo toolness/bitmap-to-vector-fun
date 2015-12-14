@@ -23,23 +23,30 @@ svg.handmade g.fills path {
 }
 
 html, textarea {
-  font-family: 'My Font';
-  text-transform: uppercase;
+  font-family: "Georgia", serif;
+}
+
+h1 {
+  font-weight: normal;
 }
 
 textarea {
+  font-family: 'My Font';
+  text-transform: uppercase;
   padding: 1em;
   border: 2px solid black;
 }
 
 .bitmap-font {
+  font-family: 'My Font';
+  word-wrap: break-word;
   padding-left: 1em;
 }
 </style>
 <title>Bitmap to Vector Fun</title>
 <h1>Bitmap to Vector Fun</h1>
 <p>This page takes the following ascii art:</p>
-<textarea id="ascii-art" rows="10" cols="40">
+<textarea id="ascii-art" rows="10" cols="35">
     *   *     ****
     *         *
 *** *** * *** * ***
@@ -48,11 +55,11 @@ textarea {
 </textarea>
 <p>And converts it into vector form:</p>
 <div id="vector-holder"></div>
-<p>Once in vector form it can be altered by code to look more curvy:</p>
+<p>Once in vector form, it can be altered by code to look more curvy:</p>
 <div id="curvy-holder"></div>
 <p>Or kind of handmade:</p>
 <div id="handmade-holder"></div>
-<p>It can also be used to make web fonts like the one you are reading now:</p>
+<p>It can also be used to make web fonts:</p>
 <div class="bitmap-font">ABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
 <p><a href="http://github.com/toolness/bitmap-to-vector-fun">Learn more on GitHub</a></p>
 <script src="ascii2grid.js"></script>
