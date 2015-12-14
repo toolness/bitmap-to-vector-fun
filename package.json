@@ -1,0 +1,24 @@
+{
+  "name": "bitmap-to-vector-fun",
+  "version": "0.0.1",
+  "description": "Just some experimentation converting 2-bit images to vector form.",
+  "dependencies": {
+    "svg2ttf": "^2.1.0"
+  },
+  "devDependencies": {
+    "express": "^4.13.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toolness/bitmap-to-vector-fun.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/toolness/bitmap-to-vector-fun/issues"
+  },
+  "homepage": "https://github.com/toolness/bitmap-to-vector-fun#readme"
+}
