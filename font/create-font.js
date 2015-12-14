@@ -26,12 +26,10 @@ var toSVGPath = function(lines) {
 
 var jsonToSVG = function(glyphs) {
   var svg = [
-    '<font id="Font1" horiz-adv-x="1000">',
+    '<font horiz-adv-x="1000">',
     '<font-face font-family="My Font" font-style="normal"',
-    '           units-per-em="1000" cap-height="600" x-height="400"',
-    '           ascent="700" descent="300"',
-    '           alphabetic="0" mathematical="350" ideographic="400" ',
-    '           hanging="500">',
+    '           units-per-em="1000" ',
+    '           ascent="700" descent="300">',
     '  <font-face-src>',
     '    <font-face-name name="My Font"/>',
     '  </font-face-src>',
