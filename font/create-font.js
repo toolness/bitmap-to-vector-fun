@@ -7,14 +7,16 @@ var gridToPaths = require('../grid2paths');
 var toSVGPath = function(lines) {
   lines = lines.slice();
   lines.reverse();
+  var yOfs = -140;
+  var xOfs = 140;
   var grid = asciiToGrid(lines.join('\n'));
   var paths = gridToPaths(grid, 150, 0);
   var d = paths.paths.map(function(subpaths) {
     return subpaths.map(function(subpath) {
-      var moveTo = 'M' + subpath[0].x + ',' + subpath[0].y;
+      var moveTo = 'M' + (subpath[0].x + xOfs) + ',' + (subpath[0].y + yOfs);
 
       return moveTo + subpath.slice(1).map(function lineTo(point, i) {
-        return 'L' + point.x + ',' + point.y;
+        return 'L' + (point.x + xOfs) + ',' + (point.y + yOfs);
       }).join('') + 'z';
     }).join('');
   }).join('');
