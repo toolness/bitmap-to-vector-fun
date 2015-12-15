@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Just some experimentation converting 2-bit images to vector form.",
   "dependencies": {
+    "mustache": "^2.2.1",
     "svg2ttf": "^2.1.0"
   },
   "devDependencies": {

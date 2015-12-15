@@ -1,0 +1,13 @@
+<font horiz-adv-x="{{ meta.unitsPerEm }}">
+<font-face font-family="{{ meta.name }}" font-style="normal"
+           units-per-em="{{ meta.unitsPerEm }}"
+           ascent="{{ meta.ascent }}"
+           descent="{{ meta.descent }}">
+  <font-face-src>
+    <font-face-name name="{{ meta.name }}"/>
+  </font-face-src>
+  {{#glyphs}}
+  <glyph unicode="{{ name }}" d="{{ pathDesc }}"></glyph>
+  {{/glyphs}}
+</font-face>
+</font>

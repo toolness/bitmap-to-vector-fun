@@ -6,6 +6,12 @@ var app = express();
 
 var PORT = process.env.PORT || 3000;
 
+app.get('/font/myfont.svg', function(req, res) {
+  var svg = createFont.jsonFileToSVG(__dirname + '/font/myfont.json');
+
+  return res.type('text/xml').send(svg);
+});
+
 app.get('/font/myfont.ttf', function(req, res) {
   var buf = createFont.jsonFileToTTF(__dirname + '/font/myfont.json');
 
