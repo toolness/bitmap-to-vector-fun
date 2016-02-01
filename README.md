@@ -1,8 +1,8 @@
 # bitmap-to-vector-fun
 
-Just some experimentation converting 2-bit images to vector form.
+Just some experimentation converting 1-bit images to vector form.
 
-[svg2ttf](https://github.com/fontello/svg2ttf) is used to convert the 2-bit images into an SVG font.
+[svg2ttf](https://github.com/fontello/svg2ttf) is used to convert the 1-bit images into an SVG font.
 
 Open `index.html` in a browser to view the experiment.
 
